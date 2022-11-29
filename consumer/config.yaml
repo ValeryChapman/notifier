@@ -1,0 +1,10 @@
+rabbitmq:
+  queue: "notifications"
+
+mongodb:
+  database: "notifier"
+  collection: "notifications"
+
+smtp:
+  host: "smtp.mail.ru"
+  port: "587"

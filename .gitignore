@@ -1,0 +1,9 @@
+# IDE
+.idea
+.DS_Store
+
+# Go
+go.sum
+
+# Env
+.env

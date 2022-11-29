@@ -1,0 +1,11 @@
+server:
+  port: "8000"
+  proxies: "127.0.0.1"
+  mode: "release" # debug, release, test
+
+rabbitmq:
+  queue: "notifications"
+
+mongodb:
+  database: "notifier"
+  collection: "notifications"

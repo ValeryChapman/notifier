@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    volumes:
+      - "rabbitmq_data:/var/lib/rabbitmq"
+
+  mongodb:
+    image: "mongo:4.4.6"
+    volumes:
+      - "mongodb_data:/data/db"
+
+  sender:
+    build: ./sender
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - mongodb
+
+  consumer:
+    build: ./consumer
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - mongodb
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - sender
+
+volumes:
+  rabbitmq_data:
+  mongodb_data:
