@@ -19,7 +19,7 @@ func SendMail(m Mail) error {
 	smtpPassword := os.Getenv("SMTP_EMAIL_PASSWORD")
 
 	smtpHost := viper.GetString("smtp.host")
-	smtpPort := viper.GetString("rabbitmq.port")
+	smtpPort := viper.GetString("smtp.port")
 	smtpAddress := smtpHost + ":" + smtpPort
 
 	// Building the message
