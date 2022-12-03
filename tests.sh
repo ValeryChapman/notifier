@@ -31,10 +31,10 @@ testGetNotifications() {
 }
 
 # Test create a notification
-testCreateNotification your_mail@example.com "Test subject" "<h1>Test body</h1>"
+testCreateNotification ily@xenc.ru "Test subject" "<h1>Test body</h1>"
 
 # Test get a notification by Id
-testGetNotification "fbafedb311393d601eb269616e4d57895b5e67c5adfaeba03f74d77aeb70aa7b"
+#testGetNotification "fbafedb311393d601eb269616e4d57895b5e67c5adfaeba03f74d77aeb70aa7b"
 
 # Test get notifications by filters
-testGetNotifications 10 0 your_mail@example.com
+testGetNotifications 10 0 ily@xenc.ru
