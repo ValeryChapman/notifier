@@ -48,35 +48,36 @@ func main() {
 
 		// Listen messages
 		for message := range repository.RabbitMessages {
+			go func() {
+				// Convert byte message to <services.Mail> structure
+				newMail := services.Mail{}
+				if err := json.Unmarshal(message.Body, &newMail); err != nil {
+					log.Errorf("Failed to decode message body >> %s", err.Error())
+				}
 
-			// Convert byte message to <services.Mail> structure
-			newMail := services.Mail{}
-			if err := json.Unmarshal(message.Body, &newMail); err != nil {
-				log.Errorf("Failed to decode message body >> %s", err.Error())
-			}
+				// Convert byte message to <Notification> structure
+				newNotification := &models.Notification{}
+				if err := json.Unmarshal(message.Body, newNotification); err != nil {
+					log.Errorf("Failed to create <Notification> structure >> %s", err.Error())
+				}
 
-			// Convert byte message to <Notification> structure
-			newNotification := &models.Notification{}
-			if err := json.Unmarshal(message.Body, newNotification); err != nil {
-				log.Errorf("Failed to create <Notification> structure >> %s", err.Error())
-			}
+				// Send a mail
+				mailCompleted := true
+				if err := services.SendMail(newMail); err != nil {
+					log.Errorf("Failed to send mail >> %s", err.Error())
+					mailCompleted = false
+				}
 
-			// Send a mail
-			mailCompleted := true
-			if err := services.SendMail(newMail); err != nil {
-				log.Errorf("Failed to send mail >> %s", err.Error())
-				mailCompleted = false
-			}
-
-			// Update a notification
-			filter := bson.M{"_id": newNotification.Id}
-			update := bson.M{"$set": bson.M{
-				"completed":  mailCompleted,
-				"updated_at": time.Now().UTC(),
-			}}
-			if err := models.UpdateNotification(filter, update); err != nil {
-				log.Errorf("Failed to update notification >> %s", err.Error())
-			}
+				// Update a notification
+				filter := bson.M{"_id": newNotification.Id}
+				update := bson.M{"$set": bson.M{
+					"completed":  mailCompleted,
+					"updated_at": time.Now().UTC(),
+				}}
+				if err := models.UpdateNotification(filter, update); err != nil {
+					log.Errorf("Failed to update notification >> %s", err.Error())
+				}
+			}()
 		}
 	}()
 
