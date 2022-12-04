@@ -15,8 +15,8 @@ type Error struct {
 	Info       ErrorInfo `json:"info"`
 }
 
-func ErrorResponse(c *gin.Context, err Error) {
-	c.IndentedJSON(err.StatusCode, err)
+func ErrorResponse(err Error) Response {
+	return CreateResponse(err.StatusCode, err)
 }
 
 type Success struct {
@@ -24,9 +24,25 @@ type Success struct {
 	Data   any    `json:"data"`
 }
 
-func SuccessResponse(c *gin.Context, statusCode int, data any) {
+func SuccessResponse(statusCode int, data any) Response {
 	success := Success{}
 	success.Status = "success"
 	success.Data = data
-	c.IndentedJSON(statusCode, success)
+	return CreateResponse(statusCode, success)
+}
+
+type Response struct {
+	code int
+	data any
+}
+
+func CreateResponse(code int, data any) Response {
+	response := Response{}
+	response.code = code
+	response.data = data
+	return response
+}
+
+func SendResponse(c *gin.Context, response Response) {
+	c.IndentedJSON(response.code, response.data)
 }

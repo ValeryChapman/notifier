@@ -15,11 +15,19 @@ func InitRoutes() *gin.Engine {
 	})
 
 	router.NoRoute(func(c *gin.Context) {
-		core.ErrorResponse(c, core.RouteNotFound)
+		response := make(chan core.Response)
+		go func(context *gin.Context) {
+			response <- core.ErrorResponse(core.RouteNotFound)
+		}(c.Copy())
+		core.SendResponse(c, <-response)
 	})
 
 	router.NoMethod(func(c *gin.Context) {
-		core.ErrorResponse(c, core.MethodNotAllowed)
+		response := make(chan core.Response)
+		go func(context *gin.Context) {
+			response <- core.ErrorResponse(core.MethodNotAllowed)
+		}(c.Copy())
+		core.SendResponse(c, <-response)
 	})
 
 	api := router.Group("/api")
