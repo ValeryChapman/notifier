@@ -2,6 +2,9 @@ FROM golang:1.19-alpine AS builder
 
 WORKDIR /usr/src/app
 
+RUN apt-get update && apt-get -y dist-upgrade
+RUN apt install -y netcat
+
 COPY ./go.mod ./go.sum ./
 RUN go mod download
 
